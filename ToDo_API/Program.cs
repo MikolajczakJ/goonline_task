@@ -1,5 +1,7 @@
 
 
+using Microsoft.EntityFrameworkCore;
+
 namespace ToDo_API
 {
     public class Program
@@ -13,6 +15,11 @@ namespace ToDo_API
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+
+            builder.Services.AddDbContext<Entities.ToDoDbContext>(options =>
+            {
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo());
