@@ -18,6 +18,10 @@ namespace ToDo_API.Entities
                  .Property(t => t.Description)
                  .IsRequired()
                  .HasMaxLength(500);
+            //Set default value for IsDone to false
+            modelBuilder.Entity<ToDo>()
+                 .Property(t => t.IsDone)
+                 .HasDefaultValue(false);
 
         }
         public ToDoDbContext(DbContextOptions<ToDoDbContext> options) : base(options)

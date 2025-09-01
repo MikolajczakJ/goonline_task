@@ -10,5 +10,6 @@ namespace ToDo_API.Entities
         public byte PercentageDone { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime Expiration { get; set; }
+        public bool IsDone { get; set; }
     }
 }
