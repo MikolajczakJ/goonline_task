@@ -1,6 +1,7 @@
 
 
 using Microsoft.EntityFrameworkCore;
+using ToDo_API.Middleware;
 using ToDo_API.Services;
 
 namespace ToDo_API
@@ -16,6 +17,7 @@ namespace ToDo_API
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Services.AddScoped<ErrorHandlingMiddleware>();
             builder.Services.AddScoped<IToDoService, ToDoService>();
             builder.Services.AddDbContext<Entities.ToDoDbContext>(options =>
             {
@@ -43,7 +45,7 @@ namespace ToDo_API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.MapControllers();
 
