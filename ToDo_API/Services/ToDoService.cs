@@ -5,9 +5,9 @@ namespace ToDo_API.Services
     public interface IToDoService
     {
         IEnumerable<ToDo> GetAll();
-        ToDo? GetById(int id);
-        IEnumerable<ToDo> GetIncomingToDo();
-        ToDo Create(ToDo toDo);
+        ToDo GetById(int id);
+        IEnumerable<ToDo> GetIncomingToDo(DateTime startingDate, DateTime endingDate);
+        bool Create(ToDo toDo);
         bool Update(int id, ToDo toDo);
         bool SetPercentageDone(int id, byte percentage);
         bool Delete(int id);
@@ -21,44 +21,92 @@ namespace ToDo_API.Services
             _context = context; 
         }
 
-        public ToDo Create(ToDo toDo)
+        public bool Create(ToDo toDo)
         {
-            throw new NotImplementedException();
+            if (CheckValues(toDo))
+            {
+                _context.ToDos.Add(toDo);
+            }
+            return _context.SaveChanges()>0;
         }
 
         public bool Delete(int id)
         {
-            throw new NotImplementedException();
+            var toDo = FindToDo(id);
+            _context.ToDos.Remove(toDo);
+            return _context.SaveChanges()>0;
+
         }
 
         public IEnumerable<ToDo> GetAll()
         {
-            throw new NotImplementedException();
+            var toDos = _context.ToDos.ToList();
+            return toDos;
         }
 
-        public ToDo? GetById(int id)
+        public ToDo GetById(int id)
         {
-            throw new NotImplementedException();
+           var toDo = FindToDo(id);
+           return toDo;
         }
 
-        public IEnumerable<ToDo> GetIncomingToDo()
+        public IEnumerable<ToDo> GetIncomingToDo(DateTime startingDate, DateTime endingDate)
         {
-            throw new NotImplementedException();
+            var toDos = _context.ToDos
+                .Where(t => t.Expiration >= startingDate && t.Expiration <= endingDate)
+                .ToList();
+            return toDos;
         }
 
         public bool MarkAsCompleted(int id)
         {
-            throw new NotImplementedException();
+            var toDo = FindToDo(id);
+            toDo.IsDone = true;
+            return _context.SaveChanges()>0;
         }
 
         public bool SetPercentageDone(int id, byte percentage)
         {
-            throw new NotImplementedException();
+            var toDo = FindToDo(id);
+            if(percentage<0 || percentage>100)
+                throw new ArgumentException("Percentage must be between 0 and 100");
+            toDo.PercentageDone = percentage;
+            return _context.SaveChanges()>0;
         }
 
         public bool Update(int id, ToDo toDo)
         {
-            throw new NotImplementedException();
+            if (CheckValues(toDo))
+            {
+               var toDoEntity = FindToDo(id);
+                  toDoEntity.Title = toDo.Title;
+                  toDoEntity.Description = toDo.Description;
+                  toDoEntity.PercentageDone = toDo.PercentageDone;
+                  toDoEntity.Expiration = toDo.Expiration;
+            }
+            return _context.SaveChanges()>0;
+
+        }
+
+        private ToDo FindToDo(int id)
+        {
+            var toDo = _context.ToDos.FirstOrDefault(t => t.Id == id);
+            if (toDo is null)
+                throw new KeyNotFoundException($"ToDo with id {id} not found");
+            
+            return toDo;
+        }
+        private bool CheckValues(ToDo toDo)
+        {
+            if (string.IsNullOrWhiteSpace(toDo.Title) || toDo.Title.Length > 70)
+                throw new ArgumentException("Title is required and must be less than 70 characters");
+            if (string.IsNullOrWhiteSpace(toDo.Description) || toDo.Description.Length > 500)
+                throw new ArgumentException("Description is required and must be less than 500 characters");
+            if (toDo.PercentageDone<0 || toDo.PercentageDone > 100)
+                throw new ArgumentException("PercentageDone must be between 0 and 100");
+            if (toDo.Expiration < DateTime.Now)
+                throw new ArgumentException("Expiration must be a future date");
+            return true;
         }
     }
 }
