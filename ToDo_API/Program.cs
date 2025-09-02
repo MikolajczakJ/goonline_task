@@ -28,7 +28,6 @@ namespace ToDo_API
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo());
             });
             var app = builder.Build();
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ToDo_API.Entities;
+using ToDo_API.Models;
 using ToDo_API.Services;
 
 namespace ToDo_API.Controllers
@@ -33,9 +34,9 @@ namespace ToDo_API.Controllers
             return Ok(toDo);
         }
         [HttpPost]
-        public IActionResult Create([FromBody]ToDo toDo)
+        public IActionResult Create([FromBody]ToDoDTO toDoDTO)
         {
-            var result = _toDoService.Create(toDo);
+            var result = _toDoService.Create(toDoDTO);
             if (result)
             {
                 return Ok();
@@ -43,9 +44,9 @@ namespace ToDo_API.Controllers
             return BadRequest();
         }
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute]int id, [FromBody]ToDo toDo)
+        public IActionResult Update([FromRoute]int id, [FromBody]ToDoDTO toDoDTO)
         {
-            var result = _toDoService.Update(id, toDo);
+            var result = _toDoService.Update(id, toDoDTO);
             if (result)
             {
                 return Ok();
