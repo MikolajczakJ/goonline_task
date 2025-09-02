@@ -1,6 +1,7 @@
 
 
 using Microsoft.EntityFrameworkCore;
+using ToDo_API.Services;
 
 namespace ToDo_API
 {
@@ -15,7 +16,7 @@ namespace ToDo_API
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
-
+            builder.Services.AddScoped<IToDoService, ToDoService>();
             builder.Services.AddDbContext<Entities.ToDoDbContext>(options =>
             {
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
