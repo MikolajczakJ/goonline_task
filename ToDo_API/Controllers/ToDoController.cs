@@ -68,7 +68,7 @@ namespace ToDo_API.Controllers
         /// <returns>Ok status if ToDo entity was created successfully, otherwise returns Bad Request </returns>
         public IActionResult Create([FromBody]ToDoDTO toDoDTO)
         {
-            var result = _toDoService.Create(toDoDTO);
+            _toDoService.Create(toDoDTO);
             return Ok();
         }
         
@@ -88,7 +88,7 @@ namespace ToDo_API.Controllers
         [HttpPut("{id}")]
         public IActionResult Update([FromRoute]int id, [FromBody]ToDoDTO toDoDTO)
         {
-            var result = _toDoService.Update(id, toDoDTO);
+            _toDoService.Update(id, toDoDTO);
             return Ok();
         }
 
@@ -103,7 +103,7 @@ namespace ToDo_API.Controllers
         [HttpPatch("{id}/percentage/{percentage}")]
         public IActionResult SetPercentageDone([FromRoute]int id, [FromRoute]byte percentage)
         {
-            var result = _toDoService.SetPercentageDone(id, percentage);
+            _toDoService.SetPercentageDone(id, percentage);
             return Ok();
         }
         /// <summary>
@@ -114,7 +114,7 @@ namespace ToDo_API.Controllers
         [HttpPatch("{id}/mark-completed")]
         public IActionResult MarkAsCompleted([FromRoute]int id)
         {
-            var result = _toDoService.MarkAsCompleted(id);
+            _toDoService.MarkAsCompleted(id);
             return Ok();
         }
         /// <summary>
@@ -127,7 +127,7 @@ namespace ToDo_API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute]int id)
         {
-            var result = _toDoService.Delete(id);
+            _toDoService.Delete(id);
             return Ok();
         }
 

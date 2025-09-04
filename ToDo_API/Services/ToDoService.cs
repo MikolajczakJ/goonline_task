@@ -8,11 +8,11 @@ namespace ToDo_API.Services
         IEnumerable<ReadToDoDTO> GetAll();
         ReadToDoDTO GetById(int id);
         IEnumerable<ReadToDoDTO> GetIncomingToDo(DateTime startingDate, DateTime endingDate);
-        bool Create(ToDoDTO toDoDTO);
-        bool Update(int id, ToDoDTO toDoDTO);
-        bool SetPercentageDone(int id, byte percentage);
-        bool Delete(int id);
-        bool MarkAsCompleted(int id);
+        void Create(ToDoDTO toDoDTO);
+        void Update(int id, ToDoDTO toDoDTO);
+        void SetPercentageDone(int id, byte percentage);
+        void Delete(int id);
+        void MarkAsCompleted(int id);
     }
     public class ToDoService:IToDoService
     {
@@ -22,7 +22,7 @@ namespace ToDo_API.Services
             _context = context; 
         }
 
-        public bool Create(ToDoDTO toDoDTO)
+        public void Create(ToDoDTO toDoDTO)
         {
             if (CheckValues(toDoDTO))
             {
@@ -37,15 +37,14 @@ namespace ToDo_API.Services
                 };
                 _context.ToDos.Add(toDo);
             }
-            return _context.SaveChanges()>0;
+            _context.SaveChanges();
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
             var toDo = FindToDo(id);
             _context.ToDos.Remove(toDo);
-            return _context.SaveChanges()>0;
-
+            _context.SaveChanges();
         }
 
         public IEnumerable<ReadToDoDTO> GetAll()
@@ -69,23 +68,24 @@ namespace ToDo_API.Services
             return toDos;
         }
 
-        public bool MarkAsCompleted(int id)
+        public void MarkAsCompleted(int id)
         {
             var toDo = FindToDo(id);
             toDo.IsDone = true;
-            return _context.SaveChanges()>0;
+            toDo.PercentageDone = 100;
+            _context.SaveChanges();
         }
 
-        public bool SetPercentageDone(int id, byte percentage)
+        public void SetPercentageDone(int id, byte percentage)
         {
             var toDo = FindToDo(id);
             if(percentage<0 || percentage>100)
                 throw new ArgumentException("Percentage must be between 0 and 100");
             toDo.PercentageDone = percentage;
-            return _context.SaveChanges()>0;
+            _context.SaveChanges();
         }
 
-        public bool Update(int id, ToDoDTO toDoDTO)
+        public void Update(int id, ToDoDTO toDoDTO)
         {
             if (CheckValues(toDoDTO))
             {
@@ -95,10 +95,9 @@ namespace ToDo_API.Services
                   toDoEntity.PercentageDone = toDoDTO.PercentageDone;
                   toDoEntity.Expiration = toDoDTO.Expiration;
             }
-            return _context.SaveChanges()>0;
+            _context.SaveChanges();
 
         }
-
         private ToDo FindToDo(int id)
         {
             var toDo = _context.ToDos.FirstOrDefault(t => t.Id == id);
