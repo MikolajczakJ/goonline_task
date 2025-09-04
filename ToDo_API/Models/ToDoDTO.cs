@@ -4,7 +4,7 @@
         string Title,
         string Description,
         DateTime Expiration,
-        byte PercentageDone,
+        byte PercentageDone
         );
     public record ReadToDoDTO(
         int Id,
