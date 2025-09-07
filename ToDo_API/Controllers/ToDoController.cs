@@ -30,15 +30,16 @@ namespace ToDo_API.Controllers
         }
 
         /// <summary>
-        /// Retrieves a list of ToDo tasks within the specified time frame.
+        /// Retrieves a list of ToDo tasks that have an expiration date within a specified time frame.
+        /// (0 - today, 1 - tomorrow, 2 - this week)
         /// </summary>
         /// <param name="startDate">The start date of the time frame. Only to-do items occurring on or after this date will be included.</param>
         /// <param name="endDate">The end date of the time frame. Only to-do items occurring on or before this date will be included.</param>
         /// <returns>An Ok containing the list of ToDo tasks within the specified time frame.</returns>
-        [HttpGet("{startDate}-{endDate}")]
-        public IActionResult GetSpecificTimeFrame(DateTime startDate, DateTime endDate)
+        [HttpGet("incoming")]
+        public IActionResult GetIncoming([FromQuery]IncomingRange range)
         {
-            var toDos = _toDoService.GetIncomingToDo(startDate, endDate);
+            var toDos = _toDoService.GetIncomingToDo(range);
             return Ok(toDos);
         }
         /// <summary>

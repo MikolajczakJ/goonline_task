@@ -1,4 +1,6 @@
-﻿using ToDo_API.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using ToDo_API.Entities;
 using ToDo_API.Models;
 
 namespace ToDo_API.Services
@@ -7,7 +9,7 @@ namespace ToDo_API.Services
     {
         IEnumerable<ReadToDoDTO> GetAll();
         ReadToDoDTO GetById(int id);
-        IEnumerable<ReadToDoDTO> GetIncomingToDo(DateTime startingDate, DateTime endingDate);
+        IEnumerable<ReadToDoDTO> GetIncomingToDo(IncomingRange range);
         int Create(ToDoDTO toDoDTO);
         void Update(int id, ToDoDTO toDoDTO);
         void SetPercentageDone(int id, byte percentage);
@@ -62,13 +64,33 @@ namespace ToDo_API.Services
            return ConvertFromEntity(toDo);
         }
 
-        public IEnumerable<ReadToDoDTO> GetIncomingToDo(DateTime startingDate, DateTime endingDate)
+        public IEnumerable<ReadToDoDTO> GetIncomingToDo(IncomingRange range)
         {
-            var toDos = _context.ToDos
-                .Where(t => t.Expiration >= startingDate && t.Expiration <= endingDate)
-                .Select(t => ConvertFromEntity(t))  
-                .ToList();
-            return toDos;
+            var today = DateTime.UtcNow.Date;
+            var tomorrow = today.AddDays(1);
+
+            var startOfWeek = today.AddDays(-(int)today.DayOfWeek + (int)DayOfWeek.Monday);
+            var endOfWeek = startOfWeek.AddDays(7).AddTicks(-1);
+
+            IQueryable<ToDo> query = _context.ToDos.Where(t => !t.IsDone);
+            return range switch
+            {
+                IncomingRange.Today =>
+                    query.Where(t => t.Expiration.Date == today)
+                    .Select(task => ConvertFromEntity(task)).ToList(),
+
+                IncomingRange.Tomorow =>
+                    query.Where(t => t.Expiration.Date == tomorrow)
+                    .Select(task => ConvertFromEntity(task)).ToList(),
+
+                IncomingRange.ThisWeek =>
+                    query.Where(t => t.Expiration.Date >= startOfWeek
+                                         && t.Expiration.Date <= endOfWeek)
+                    .Select(task => ConvertFromEntity(task)).ToList(),
+
+                _ => Enumerable.Empty<ReadToDoDTO>()
+            };
+
         }
 
         public void MarkAsCompleted(int id)

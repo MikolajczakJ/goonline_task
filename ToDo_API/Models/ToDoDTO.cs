@@ -15,4 +15,5 @@
         byte PercentageDone,
         bool IsDone
         );
+
 }
