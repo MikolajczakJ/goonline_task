@@ -63,13 +63,13 @@ namespace ToDo_API.Controllers
         /// Creates a new ToDo task.
         /// </summary>
         /// <param name="toDoDTO"></param>
-        /// <response code="200">If the item is created</response>
+        /// <response code="201">If the item is created</response>
         /// <response code="400">If the item is doesn't meet the requirements</response>
-        /// <returns>Ok status if ToDo entity was created successfully, otherwise returns Bad Request </returns>
+        /// <returns>Created status if ToDo entity was created successfully, otherwise returns Bad Request </returns>
         public IActionResult Create([FromBody]ToDoDTO toDoDTO)
         {
             _toDoService.Create(toDoDTO);
-            return Ok();
+            return Created();
         }
         
 
@@ -78,18 +78,18 @@ namespace ToDo_API.Controllers
         ///</summary>
         ///<param name="id">Id of the toDo task, that will be updated </param>
         ///<param name="toDoDTO">New values for the toDo task</param>
-        ///<response code="200">If the item is successfully updated</response>
+        ///<response code="204">If the item is successfully updated</response>
         ///<response code ="400">If the item is doesn't meet the requirements</response>
         ///<response code ="404">If there is no item with given id</response>
         ///<returns>
-        ///Ok status if ToDo entity was successfully updated, Bad Request if updated 
+        ///No content status if ToDo entity was successfully updated, Bad Request if updated 
         ///ToDo doesn't meet requirements and Not Found if tere is no ToDo with given Id
         ///</returns>
         [HttpPut("{id}")]
         public IActionResult Update([FromRoute]int id, [FromBody]ToDoDTO toDoDTO)
         {
             _toDoService.Update(id, toDoDTO);
-            return Ok();
+            return NoContent();
         }
 
         /// <summary>
@@ -121,14 +121,14 @@ namespace ToDo_API.Controllers
         /// Deletes a ToDo item with the specified ID.
         /// </summary>
         /// <param name="id">ID of the ToDo task to delete.</param>
-        /// <response code="200">If the item is successfully deleted</response>
+        /// <response code="204">If the item is successfully deleted</response>
         /// <response code="404">If the item could not be found</response>
-        /// <returns>Returns Ok if the item was successfully deleted; otherwise, returns Not Found"/>.</returns>
+        /// <returns>Returns No content if the item was successfully deleted; otherwise, returns Not Found"/>.</returns>
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute]int id)
         {
             _toDoService.Delete(id);
-            return Ok();
+            return NoContent();
         }
 
     }

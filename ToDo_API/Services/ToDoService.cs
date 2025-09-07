@@ -8,7 +8,7 @@ namespace ToDo_API.Services
         IEnumerable<ReadToDoDTO> GetAll();
         ReadToDoDTO GetById(int id);
         IEnumerable<ReadToDoDTO> GetIncomingToDo(DateTime startingDate, DateTime endingDate);
-        void Create(ToDoDTO toDoDTO);
+        int Create(ToDoDTO toDoDTO);
         void Update(int id, ToDoDTO toDoDTO);
         void SetPercentageDone(int id, byte percentage);
         void Delete(int id);
@@ -22,8 +22,9 @@ namespace ToDo_API.Services
             _context = context; 
         }
 
-        public void Create(ToDoDTO toDoDTO)
+        public int Create(ToDoDTO toDoDTO)
         {
+            int id = 0;
             if (CheckValues(toDoDTO))
             {
                 ToDo toDo = new ToDo
@@ -36,8 +37,10 @@ namespace ToDo_API.Services
                     CreatedAt = DateTime.UtcNow
                 };
                 _context.ToDos.Add(toDo);
+                id = toDo.Id;
             }
             _context.SaveChanges();
+            return id;
         }
 
         public void Delete(int id)
